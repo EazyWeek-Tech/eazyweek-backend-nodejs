@@ -1,0 +1,26 @@
+{
+  "name": "eazyweek-backend-nodejs",
+  "version": "1.0.0",
+  "description": "Node.js + Express backend for Eazyweek",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EazyWeek-Tech/eazyweek-backend-nodejs.git"
+  },
+  "engines": {
+  "node": ">=20"
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EazyWeek-Tech/eazyweek-backend-nodejs/issues"
+  },
+  "homepage": "https://github.com/EazyWeek-Tech/eazyweek-backend-nodejs#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
