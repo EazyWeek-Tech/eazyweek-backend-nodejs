@@ -1,18 +1,20 @@
-const express = require("express");
-
-const app = express();
-app.use(express.json());
-
-app.get("/", (req, res) => {
-  res.send("Eazyweek Beta API is running 🚀");
-});
-
-app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", env: process.env.APP_ENV });
-});
+require("dotenv").config();
+const app = require("./app");
+const { connectDB } = require("./src/config/db");
+const logger = require("./src/config/logger");
 
 const PORT = process.env.PORT || 8080;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      logger.info(`Server running on port ${PORT} [${process.env.APP_ENV}]`);
+    });
+  } catch (err) {
+    logger.error("Failed to start server:", err);
+    process.exit(1);
+  }
+};
+
+startServer();
