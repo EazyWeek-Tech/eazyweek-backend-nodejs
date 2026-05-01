@@ -10,6 +10,8 @@ const { sessionMiddleware } = require("./src/middlewares/session.middleware");
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 // Security
 app.use(helmet());
 app.use(cors({
