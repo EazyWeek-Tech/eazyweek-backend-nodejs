@@ -1,15 +1,19 @@
 const { sql, getPool } = require("../../config/db");
 
-const findAuthRecord = async (username) => {
+const findAuthRecord = async (login) => {
   const pool = getPool();
   const result = await pool
     .request()
-    .input("USERNAME", sql.VarChar, username)
+    .input("LOGIN", sql.VarChar, login)
     .query(`
-      SELECT RECID, EMPLOYEECODE, USERNAME, PASSWORD
+      SELECT TOP 1 RECID, EMPLOYEECODE, USERNAME, PASSWORD
       FROM CLINIC_AUTHENTICATION
-      WHERE USERNAME = @USERNAME AND Active = 1
+      WHERE LOWER(USERNAME) = LOWER(@LOGIN)
+      AND Active = 1
+      ORDER BY RECID DESC
     `);
+  
+  console.log("Auth record found:", result.recordset);
   return result.recordset[0] || null;
 };
 

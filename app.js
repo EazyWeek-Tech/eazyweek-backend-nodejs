@@ -5,12 +5,22 @@ const { morganMiddleware } = require("./src/middlewares/logger.middleware");
 const { errorHandler } = require("./src/middlewares/error.middleware");
 const { rateLimiter } = require("./src/middlewares/rateLimiter.middleware");
 const router = require("./src/routes");
+const { sessionMiddleware } = require("./src/middlewares/session.middleware");
+
 
 const app = express();
 
 // Security
 app.use(helmet());
-app.use(cors({ origin: process.env.ALLOWED_ORIGINS?.split(",") || "*" }));
+app.use(cors({
+  origin: ["http://localhost:5173", "http://localhost:3000", "https://beta.eazyweek.com"],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
+app.use(sessionMiddleware);
+
 
 // Rate limiting
 app.use("/api/", rateLimiter);

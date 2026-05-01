@@ -6,9 +6,17 @@ const { JWT_EXPIRY } = require("../../config/constants");
 const login = async ({ username, password }) => {
   // 1. Find auth record
   const authRecord = await findAuthRecord(username);
-  if (!authRecord || authRecord.PASSWORD !== password) {
+
+
+  if (!authRecord) {
     throw new AppError("Invalid username or password", 401);
   }
+
+  // Add trim() to handle whitespace in DB passwords
+  if (authRecord.PASSWORD.trim() !== password.trim()) {
+    throw new AppError("Invalid username or password", 401);
+  }
+
 
   // 2. Find employee details
   const employee = await findEmployeeByCode(authRecord.EMPLOYEECODE);
