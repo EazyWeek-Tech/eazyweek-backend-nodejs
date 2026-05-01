@@ -9,6 +9,7 @@ const { sessionMiddleware } = require("./src/middlewares/session.middleware");
 
 
 const app = express();
+app.set("case sensitive routing", false);
 
 app.set("trust proxy", 1);
 
