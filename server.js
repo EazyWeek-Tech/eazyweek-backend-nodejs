@@ -3,7 +3,7 @@ const app = require("./app");
 const { connectDB } = require("./src/config/db");
 const logger = require("./src/config/logger");
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   try {
