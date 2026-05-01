@@ -13,7 +13,12 @@ const app = express();
 // Security
 app.use(helmet());
 app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:3000", "https://beta.eazyweek.com"],
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://beta.eazyweek.com",
+    "http://beta.eazyweek.com",
+  ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
