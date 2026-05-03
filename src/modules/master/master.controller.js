@@ -63,14 +63,29 @@ const loadRooms = asyncHandler(async (req, res) => {
 });
 
 const loadDoctors = asyncHandler(async (req, res) => {
-  const centerCode = req.user.centerCode;
-  const data = await service.getDoctors(centerCode);
+  const centerCode   = req.user.centerCode   || "";
+  const employeeCode = req.query.employeeCode || "";
+  const userId       = req.user.employeeCode  || "";
+  const data = await service.getDoctors(centerCode, employeeCode, userId);
   return success(res, data);
+});
+
+const insertDoctorMapping = asyncHandler(async (req, res) => {
+  const result = await service.insertDoctorMapping(req.body);
+  if (!result.success) {
+    return res.status(409).json({ success: false, message: result.message });
+  }
+  return success(res, null, result.message);
+});
+
+const removeDoctorMapping = asyncHandler(async (req, res) => {
+  const result = await service.removeDoctorMapping(req.body.employeeCode);
+  return success(res, null, result.message);
 });
 
 module.exports = {
   loadCenters, insertClinic, removeClinic,
   loadDepartments, insertDepartment, removeDepartment,
   loadCountries, loadNationalities,
-  loadPractitioners, loadRooms, loadDoctors,
+  loadPractitioners, loadRooms, loadDoctors,insertDoctorMapping,removeDoctorMapping,
 };

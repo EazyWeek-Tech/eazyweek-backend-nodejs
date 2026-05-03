@@ -338,8 +338,37 @@ const insertRoleMapping = async ({ employeeCode, centerCode, rCode, primaryClini
     `);
 };
 
+const getDoctorEmployees = async () => {
+  const pool = getPool();
+  const result = await pool.request().query(`
+    SELECT
+      RECID, EMPLOYEECODE, FIRSTNAME, LASTNAME, JOB, CENTERCODE, EMAIL, MOBILEPHONE
+    FROM CLINIC_EMPLOYEE
+    WHERE Active = 1
+      AND UPPER(JOB) IN (
+        'DERMA NURSE',
+        'DERMATOLOGIST',
+        'DERMATOLOGY REGISTRAR',
+        'DERMATOLOGY RESIDENT',
+        'DERMATOLOGYCONSULTANT',
+        'DOCTOR',
+        'GENERAL PHYSICIAN',
+        'HEAD NURSE',
+        'HYDRAFACIAL NURSE',
+        'LASER NURSE',
+        'NURSE',
+        'NURSESKINPRACTITIONER',
+        'NURSING ASSISTANT',
+        'OBGYNCONSULTANT',
+        'OBNURSE'
+      )
+    ORDER BY FIRSTNAME, LASTNAME
+  `);
+  return result.recordset;
+};
+
 module.exports = {
   findAllForDropdown, findAll, findById, findByEmployeeCode,
   create, update, deactivate, resetPassword, markFirstLoginDone, isFirstLogin,
-  getRoleMapping, removeRoleMapping, getAllRoles,insertRoleMapping
+  getRoleMapping, removeRoleMapping, getAllRoles,insertRoleMapping,getDoctorEmployees,
 };

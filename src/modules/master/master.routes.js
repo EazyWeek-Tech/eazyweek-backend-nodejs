@@ -30,4 +30,8 @@ router.get("/LoadAllPractioner/:centerCode", controller.loadPractitioners);
 router.get("/LoadRoom/:centerCode",          controller.loadRooms);
 router.get("/LoadDoctorMapping",             controller.loadDoctors);
 
+router.post("/DoctorMappingInsert", authorize(ROLES.ADMIN, ROLES.CLINIC_MANAGER), controller.insertDoctorMapping);
+router.post("/DoctorMappingRemove", authorize(ROLES.ADMIN, ROLES.CLINIC_MANAGER), controller.removeDoctorMapping);
+ 
+
 module.exports = router;

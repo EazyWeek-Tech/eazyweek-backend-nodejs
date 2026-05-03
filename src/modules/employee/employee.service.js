@@ -61,9 +61,12 @@ const markFirstLoginDone = async (employeeCode) => {
 
 const insertRoleMapping = (data) => repo.insertRoleMapping(data);
 
+const getDoctorEmployees = () => repo.getDoctorEmployees();
+
+
 module.exports = {
   getAll, getAllForDropdown, getById,
   create, update, deactivate,
   resetPassword, checkFirstLogin, markFirstLoginDone,insertRoleMapping,
-  getRoleMapping, removeRoleMapping, getAllRoles,
+  getRoleMapping, removeRoleMapping, getAllRoles,getDoctorEmployees,
 };

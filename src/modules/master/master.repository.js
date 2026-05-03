@@ -145,25 +145,51 @@ const loadRooms = async (centerCode) => {
 
 // ─── DOCTORS ─────────────────────────────────────────────────────────────────
 
-const loadDoctorMapping = async (centerCode) => {
+const loadDoctorMapping = async (centerCode, employeeCode = "", userId = "") => {
   const pool = getPool();
   const result = await pool
     .request()
-    .input("TopClinicCode", sql.VarChar, centerCode)
-    .input("EMPLOYEECODE",  sql.VarChar, "")
-    .input("UserID",        sql.VarChar, "")
+    .input("TopClinicCode", sql.NVarChar, centerCode   || "")
+    .input("EMPLOYEECODE",  sql.NVarChar, employeeCode || "")
+    .input("UserID",        sql.NVarChar, userId       || "")
     .execute("SpLoadDoctors");
+
   return result.recordset.map((r) => ({
-    employeeCode:     r["Employee Code"]    || "",
-    firstName:        r["First Name"]       || "",
-    lastName:         r["Last Name"]        || "",
-    associatedClinic: r["Associated Clinic"]|| "",
+    employeeCode:     r["Employee Code"]     || "",
+    firstName:        r["First Name"]        || "",
+    lastName:         r["Last Name"]         || "",
+    associatedClinic: r["Associated Clinic"] || "",
   }));
 };
 
+const insertDoctorMapping = async ({ employeeCode, firstName, lastName, associatedClinic }) => {
+  const pool = getPool();
+  const result = await pool
+    .request()
+    .input("EMPLOYEE",         sql.NVarChar, employeeCode)
+    .input("FIRSTNAME",        sql.NVarChar, firstName    || "")
+    .input("LASTNAME",         sql.NVarChar, lastName     || "")
+    .input("ASSOCIATEDCLINIC", sql.NVarChar, associatedClinic)
+    .execute("SpCreateNewDoctor");
+
+  const rows = result.recordset;
+  const val  = rows.length > 0 ? parseInt(Object.values(rows[0])[0]) : 0;
+  if (val === 1) return { success: true,  message: "Practitioner added successfully" };
+  return              { success: false, message: "Practitioner already exists for this clinic" };
+};
+
+const removeDoctorMapping = async (employeeCode) => {
+  const pool = getPool();
+  await pool
+    .request()
+    .input("EMPLOYEECODE", sql.NVarChar, employeeCode)
+    .execute("SpRemoveDoctor");
+
+  return { success: true, message: "Practitioner removed successfully" };
+};
 module.exports = {
   loadCenters, insertClinic, removeClinic,
   loadDepartments, insertDepartment, removeDepartment,
   loadCountries, loadNationalities,
-  loadAllPractitioners, loadRooms, loadDoctorMapping,
+  loadAllPractitioners, loadRooms, loadDoctorMapping,insertDoctorMapping, removeDoctorMapping,
 };

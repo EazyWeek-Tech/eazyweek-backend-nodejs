@@ -76,9 +76,14 @@ const addRoleMappingController = asyncHandler(async (req, res) => {
   return success(res, null, "Role mapping added");
 });
 
+const getDoctorEmployeesController = asyncHandler(async (req, res) => {
+  const data = await service.getDoctorEmployees();
+  return success(res, data);
+});
+
 module.exports = {
   getAll, getDropdown, getById,
   createEmployee, updateEmployee, deactivateEmployee,
   resetPassword, firstLoginCheck, firstLoginDone,
-  getRoleMappingController, removeRoleMappingController, getRolesController,addRoleMappingController
+  getRoleMappingController, removeRoleMappingController, getRolesController,addRoleMappingController,getDoctorEmployeesController
 };

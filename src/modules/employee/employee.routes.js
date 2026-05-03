@@ -21,6 +21,7 @@ router.post("/first-login-done",          controller.firstLoginDone);
 router.put("/reset-password",             resetPasswordValidation, validate, controller.resetPassword);
 router.post("/role-mapping",              controller.addRoleMappingController);                        // ✅ ADD THIS
 router.delete("/role-mapping/:recId",     authorize(ROLES.ADMIN), controller.removeRoleMappingController);
+router.get("/doctors", controller.getDoctorEmployeesController);
 
 // ✅ Generic GET routes
 router.get("/",    controller.getAll);
@@ -51,5 +52,7 @@ router.put(
   authorize(ROLES.ADMIN),
   controller.deactivateEmployee
 );
+
+
 
 module.exports = router;
