@@ -5,6 +5,7 @@ router.use("/auth",     require("../modules/auth/auth.routes"));
 router.use("/employee", require("../modules/employee/employee.routes"));
 router.use("/session", require("../modules/session/session.routes"));
 router.use("/master", require("../modules/master/master.routes"));
+router.use("/Master", require("../modules/service/service.routes"));
 
 // Future modules — uncomment as they are migrated:
 // router.use("/master",      require("../modules/master/master.routes"));
