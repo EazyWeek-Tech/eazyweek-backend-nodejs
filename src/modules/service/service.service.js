@@ -24,9 +24,13 @@ const getServiceCategory      = ()                                  => repo.load
 const getServiceSubCategory   = (categoryCode)                      => repo.loadServiceSubCategory(categoryCode);
 const getServiceSubSubCategory= (categoryCode, subCategoryCode)     => repo.loadServiceSubSubCategory(categoryCode, subCategoryCode);
 
+const getPractitionersByClinic      = (centerCode)  => repo.loadPractitionersByClinic(centerCode);
+const getServicePractitionerMapping = (serviceCode) => repo.loadServicePractitionerMapping(serviceCode);
+
 module.exports = {
   getServiceList, getServiceDetails,
   saveGeneral, savePrice, saveBOM, savePractitioners, saveForms,
+  getPractitionersByClinic, getServicePractitionerMapping,
   searchConsumables,
   getServiceCategory, getServiceSubCategory, getServiceSubSubCategory,
 };

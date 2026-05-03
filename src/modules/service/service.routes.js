@@ -44,4 +44,10 @@ router.get("/ServiceCategory",          controller.loadServiceCategory);
 router.get("/ServiceSubCategory",       controller.loadServiceSubCategory);
 router.get("/ServiceSubSubCategory",    controller.loadServiceSubSubCategory);
 
+// ── Practitioner helpers ──────────────────────────────────────────────────────
+// GET /api/Master/LoadPractitionersByClinic/:centerCode
+// GET /api/Master/LoadServicePractitionerMapping/:serviceCode
+router.get("/LoadPractitionersByClinic/:centerCode",       controller.loadPractitionersByClinic);
+router.get("/LoadServicePractitionerMapping/:serviceCode", controller.loadServicePractitionerMapping);
+
 module.exports = router;

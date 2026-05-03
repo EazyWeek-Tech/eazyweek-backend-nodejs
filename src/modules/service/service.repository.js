@@ -32,11 +32,25 @@ const loadServiceDetails = async (serviceCode, recId, centerCode) => {
     .input("SERVICECODE", sql.NVarChar, serviceCode)
     .execute("SpLoadServiceBOM");
 
-  // 3. Price
+  // 3. Price — query directly by SERVICECODE (SpLoadServicePrice uses SERVICERECID
+  //    which is an internal FK and unreliable from the list row)
   const dtPrice = await pool
     .request()
-    .input("SERVICERECID", sql.Int, recId)
-    .execute("SpLoadServicePrice");
+    .input("SERVICECODE", sql.NVarChar, serviceCode)
+    .query(`
+      SELECT
+        p.CENTERCODE,
+        cc.CNAME       AS CNAME,
+        p.PRICE,
+        p.TAXINCLUDED,
+        p.TAXPERCENT,
+        p.STORERELEASE
+      FROM CLINIC_SERVICE_PRICE p
+      LEFT JOIN CLINIC_CENTERS cc ON cc.CENTERCODE = p.CENTERCODE
+      WHERE p.SERVICECODE = @SERVICECODE
+        AND p.Active = 1
+      ORDER BY p.CENTERCODE
+    `);
 
   // 4. Doctors/Nurses
   const dtDoc = await pool
@@ -192,6 +206,73 @@ const loadServiceSubSubCategory = async (categoryCode, subCategoryCode) => {
   return result.recordset;
 };
 
+
+
+// ─── PRACTITIONER LOOKUP ───────────────────────────────────────────────────────
+
+// Load all active practitioners for a clinic from CLINIC_DOCTORS
+// Joins CLINIC_EMPLOYEE for names (CLINIC_DOCTORS.EMPLOYEE = CLINIC_EMPLOYEE.EMPLOYEECODE)
+const loadPractitionersByClinic = async (centerCode) => {
+  const pool = getPool();
+  const result = await pool
+    .request()
+    .input("CENTERCODE", sql.NVarChar, centerCode)
+    .query(`
+      SELECT
+        d.RECID,
+        d.EMPLOYEE                               AS practitionerCode,
+        e.FIRSTNAME                              AS firstName,
+        e.LASTNAME                               AS lastName,
+        LTRIM(RTRIM(ISNULL(e.FIRSTNAME,'') + ' ' + ISNULL(e.LASTNAME,''))) AS fullName,
+        d.ASSOCIATEDCLINIC                       AS centerCode,
+        cc.CNAME                                 AS clinicName
+      FROM CLINIC_DOCTORS d
+      LEFT JOIN CLINIC_EMPLOYEE e
+        ON e.EMPLOYEECODE = d.EMPLOYEE
+      LEFT JOIN CLINIC_CENTERS cc
+        ON cc.CENTERCODE = d.ASSOCIATEDCLINIC
+      WHERE d.ASSOCIATEDCLINIC = @CENTERCODE
+        AND d.Active = 1
+        AND d.EMPLOYEE IS NOT NULL
+        AND d.EMPLOYEE <> ''
+      ORDER BY e.FIRSTNAME
+    `);
+  return result.recordset;
+};
+
+// Load existing practitioner mappings for a service
+// Joins CLINIC_EMPLOYEE for names (PRACTITIONER = EMPLOYEECODE)
+const loadServicePractitionerMapping = async (serviceCode) => {
+  const pool = getPool();
+  const result = await pool
+    .request()
+    .input("SERVICECODE", sql.NVarChar, serviceCode)
+    .query(`
+      SELECT
+        spm.RECID,
+        spm.SERVICECODE,
+        spm.SERVICECODE                          AS serviceCode,
+        spm.CENTERCODE                           AS centerCode,
+        spm.PRACTITIONER                         AS practitionerCode,
+        spm.PRACTITIONERTYPE                     AS practitionerType,
+        e.FIRSTNAME                              AS firstName,
+        e.LASTNAME                               AS lastName,
+        LTRIM(RTRIM(ISNULL(e.FIRSTNAME,'') + ' ' + ISNULL(e.LASTNAME,''))) AS fullName,
+        cc.CNAME                                 AS clinicName
+      FROM CLINIC_SERVICE_PRACTITIONERMAPPING spm
+      LEFT JOIN CLINIC_EMPLOYEE e
+        ON e.EMPLOYEECODE = spm.PRACTITIONER
+      LEFT JOIN CLINIC_CENTERS cc
+        ON cc.CENTERCODE = spm.CENTERCODE
+      WHERE spm.SERVICECODE = @SERVICECODE
+        AND spm.Active = 1
+        AND spm.PRACTITIONER IS NOT NULL
+        AND spm.PRACTITIONER <> ''
+      ORDER BY spm.PRACTITIONERTYPE, e.FIRSTNAME
+    `);
+  return result.recordset;
+};
+
 module.exports = {
   loadServiceList,
   loadServiceDetails,
@@ -204,4 +285,6 @@ module.exports = {
   loadServiceCategory,
   loadServiceSubCategory,
   loadServiceSubSubCategory,
+  loadPractitionersByClinic,
+  loadServicePractitionerMapping,
 };

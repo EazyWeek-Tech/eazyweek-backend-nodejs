@@ -150,10 +150,23 @@ const loadServiceSubSubCategory = asyncHandler(async (req, res) => {
   })));
 });
 
+
+const loadPractitionersByClinic = asyncHandler(async (req, res) => {
+  const data = await service.getPractitionersByClinic(req.params.centerCode);
+  return success(res, data);
+});
+
+const loadServicePractitionerMapping = asyncHandler(async (req, res) => {
+  const data = await service.getServicePractitionerMapping(req.params.serviceCode);
+  return success(res, data);
+});
+
+
 module.exports = {
   loadService, fetchServiceDetails,
   insertServiceGeneral, insertServicePrice,
   insertServiceBOM, insertServicePractitioner, insertServiceForms,
+  loadPractitionersByClinic, loadServicePractitionerMapping,
   searchConsumables,
   loadServiceCategory, loadServiceSubCategory, loadServiceSubSubCategory,
 };
