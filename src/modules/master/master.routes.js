@@ -33,5 +33,7 @@ router.get("/LoadDoctorMapping",             controller.loadDoctors);
 router.post("/DoctorMappingInsert", authorize(ROLES.ADMIN, ROLES.CLINIC_MANAGER), controller.insertDoctorMapping);
 router.post("/DoctorMappingRemove", authorize(ROLES.ADMIN, ROLES.CLINIC_MANAGER), controller.removeDoctorMapping);
  
+router.get("/LoadAllCategory",                              controller.loadAllCategory);
+router.get("/GetServiceByCategory/:categoryCode/:centerCode", controller.getServiceByCategory);
 
 module.exports = router;

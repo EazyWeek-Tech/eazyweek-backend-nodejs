@@ -83,9 +83,25 @@ const removeDoctorMapping = asyncHandler(async (req, res) => {
   return success(res, null, result.message);
 });
 
+ 
+// GET /api/Master/LoadAllCategory
+// Uses centerCode from JWT so each clinic sees only its own quick tabs
+const loadAllCategory = asyncHandler(async (req, res) => {
+  const centerCode = req.user.centerCode || "";
+  const data = await service.getAllCategories(centerCode);
+  return success(res, data);
+});
+ 
+// GET /api/Master/GetServiceByCategory/:categoryCode/:centerCode
+const getServiceByCategory = asyncHandler(async (req, res) => {
+  const { categoryCode, centerCode } = req.params;
+  const data = await service.getServiceByCategory(categoryCode, centerCode);
+  return success(res, data);
+});
+
 module.exports = {
   loadCenters, insertClinic, removeClinic,
   loadDepartments, insertDepartment, removeDepartment,
   loadCountries, loadNationalities,
-  loadPractitioners, loadRooms, loadDoctors,insertDoctorMapping,removeDoctorMapping,
+  loadPractitioners, loadRooms, loadDoctors,insertDoctorMapping,removeDoctorMapping,loadAllCategory,getServiceByCategory
 };

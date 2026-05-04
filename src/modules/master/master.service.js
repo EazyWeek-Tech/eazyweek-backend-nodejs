@@ -20,9 +20,14 @@ const getDoctors       = (centerCode, employeeCode, userId) =>
 const insertDoctorMapping = (data)         => repo.insertDoctorMapping(data);
 const removeDoctorMapping = (employeeCode) => repo.removeDoctorMapping(employeeCode);
 
+
+const getAllCategories      = (centerCode)                => repo.loadAllCategory(centerCode);
+const getServiceByCategory = (categoryCode, centerCode)  => repo.loadServiceByCategory(categoryCode, centerCode);
+ 
+
 module.exports = {
   getCenters, createClinic, deleteClinic,
   getDepartments, createDepartment, deleteDepartment,
   getCountries, getNationalities,
-  getPractitioners, getRooms, getDoctors,insertDoctorMapping,removeDoctorMapping,
+  getPractitioners, getRooms, getDoctors,insertDoctorMapping,removeDoctorMapping,getAllCategories,getServiceByCategory,
 };

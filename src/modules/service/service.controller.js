@@ -161,6 +161,13 @@ const loadServicePractitionerMapping = asyncHandler(async (req, res) => {
   return success(res, data);
 });
 
+// GET /api/Master/GetServiceByName/:searchValue/:centerCode
+const getServiceByName = asyncHandler(async (req, res) => {
+  const { searchValue, centerCode } = req.params;
+  const data = await service.getServiceByName(searchValue, centerCode);
+  return success(res, data);
+});
+
 
 module.exports = {
   loadService, fetchServiceDetails,
@@ -168,5 +175,5 @@ module.exports = {
   insertServiceBOM, insertServicePractitioner, insertServiceForms,
   loadPractitionersByClinic, loadServicePractitionerMapping,
   searchConsumables,
-  loadServiceCategory, loadServiceSubCategory, loadServiceSubSubCategory,
+  loadServiceCategory, loadServiceSubCategory, loadServiceSubSubCategory,getServiceByName,
 };

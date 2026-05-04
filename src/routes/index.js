@@ -6,6 +6,13 @@ router.use("/employee", require("../modules/employee/employee.routes"));
 router.use("/session", require("../modules/session/session.routes"));
 router.use("/master", require("../modules/master/master.routes"));
 router.use("/Master", require("../modules/service/service.routes"));
+router.use("/Invoice", require("../modules/invoice/invoice.routes"));
+router.use("/Customer", require("../modules/customer/customer.routes"));
+ router.get(
+  "/Master/GetCustomerBySearchKey/:searchKey/:centerCode",
+  require("../middlewares/auth.middleware").verifyToken,
+  require("../modules/customer/customer.controller").searchCustomers
+);
 
 // Future modules — uncomment as they are migrated:
 // router.use("/master",      require("../modules/master/master.routes"));

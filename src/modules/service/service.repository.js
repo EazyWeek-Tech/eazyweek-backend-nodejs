@@ -273,6 +273,45 @@ const loadServicePractitionerMapping = async (serviceCode) => {
   return result.recordset;
 };
 
+
+// ─── SEARCH SERVICE BY NAME ───────────────────────────────────────────────────
+// Used by InvoiceForm autocomplete — queries CLINIC_SERVICE joined with price
+const searchServiceByName = async (searchValue, centerCode) => {
+  const pool = getPool();
+  const result = await pool
+    .request()
+    .input("SearchValue", sql.NVarChar, searchValue || "")
+    .input("CENTERCODE",  sql.NVarChar, centerCode  || "")
+    .query(`
+      SELECT TOP 20
+        s.SERVICECODE                AS serviceCode,
+        s.SERVICENAME                AS serviceName,
+        ISNULL(p.PRICE,        0)    AS price,
+        ISNULL(p.TAXINCLUDED,  '')   AS taxIncluded,
+        ISNULL(p.TAXPERCENT,   0)    AS taxPercent,
+        ISNULL(p.STORERELEASE, '')   AS storeRelease
+      FROM CLINIC_SERVICE s
+      OUTER APPLY (
+        SELECT TOP 1
+          PRICE, TAXINCLUDED, TAXPERCENT, STORERELEASE
+        FROM CLINIC_SERVICE_PRICE
+        WHERE SERVICECODE = s.SERVICECODE
+          AND CENTERCODE  = @CENTERCODE
+        ORDER BY RECID DESC
+      ) p
+      WHERE s.SERVICENAME LIKE '%' + @SearchValue + '%'
+      ORDER BY s.SERVICENAME
+    `);
+  return result.recordset.map(r => ({
+    serviceCode:  r.serviceCode  || "",
+    serviceName:  r.serviceName  || "",
+    price:        parseFloat(r.price      || 0),
+    taxPercent:   parseFloat(r.taxPercent || 0),
+    taxIncluded:  r.taxIncluded  || "",
+    storeRelease: r.storeRelease || "",
+  }));
+};
+
 module.exports = {
   loadServiceList,
   loadServiceDetails,
@@ -287,4 +326,5 @@ module.exports = {
   loadServiceSubSubCategory,
   loadPractitionersByClinic,
   loadServicePractitionerMapping,
+  searchServiceByName,
 };

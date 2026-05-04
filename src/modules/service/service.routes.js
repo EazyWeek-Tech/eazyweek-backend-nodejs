@@ -49,5 +49,6 @@ router.get("/ServiceSubSubCategory",    controller.loadServiceSubSubCategory);
 // GET /api/Master/LoadServicePractitionerMapping/:serviceCode
 router.get("/LoadPractitionersByClinic/:centerCode",       controller.loadPractitionersByClinic);
 router.get("/LoadServicePractitionerMapping/:serviceCode", controller.loadServicePractitionerMapping);
+router.get("/GetServiceByName/:searchValue/:centerCode",       controller.getServiceByName);
 
 module.exports = router;
